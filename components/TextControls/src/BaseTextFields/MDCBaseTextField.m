@@ -15,6 +15,7 @@
 #import "MDCBaseTextField.h"
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #import "MaterialTextControls+Enums.h"
 #import "MDCTextControlAssistiveLabelDrawPriority.h"
@@ -185,6 +186,12 @@ static char *const kKVOContextMDCBaseTextField = "kKVOContextMDCBaseTextField";
  methods expect them, they are determined by this method, which is called before the superclass's @c
  -layoutSubviews in the layout cycle.
  */
+
+- (CGFloat)widthOfString:(NSString *)string withFont:(UIFont *)font {
+     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+     return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size].width;
+ }
+
 - (void)preLayoutSubviews {
   self.textControlState = [self determineCurrentTextControlState];
   self.labelPosition = [self determineCurrentLabelPosition];
@@ -192,7 +199,7 @@ static char *const kKVOContextMDCBaseTextField = "kKVOContextMDCBaseTextField";
       [self textControlColorViewModelForState:self.textControlState];
   [self applyColorViewModel:colorViewModel withLabelPosition:self.labelPosition];
   CGSize fittingSize = CGSizeMake(CGRectGetWidth(self.bounds), CGFLOAT_MAX);
-  self.layout = [self calculateLayoutWithTextFieldSize:fittingSize];
+  self.layout = [self calculateLayoutWithTextFieldSize:fittingSize floatingLabelWidth:[self widthOfString:self.label.text withFont:self.label.font]];
   self.labelFrame = [self.layout labelFrameWithLabelPosition:self.labelPosition];
 }
 
@@ -270,7 +277,7 @@ static char *const kKVOContextMDCBaseTextField = "kKVOContextMDCBaseTextField";
   return CGRectMake(CGRectGetMinX(textRect), minY, CGRectGetWidth(textRect), systemDefinedHeight);
 }
 
-- (MDCBaseTextFieldLayout *)calculateLayoutWithTextFieldSize:(CGSize)textFieldSize {
+- (MDCBaseTextFieldLayout *)calculateLayoutWithTextFieldSize:(CGSize)textFieldSize floatingLabelWidth:(CGFloat)floatingLabelWidth {
   CGFloat clampedCustomAssistiveLabelDrawPriority =
       [self clampedCustomAssistiveLabelDrawPriority:self.customAssistiveLabelDrawPriority];
   CGFloat clearButtonSideLength = [self clearButtonSideLengthWithTextFieldSize:textFieldSize];
@@ -280,6 +287,7 @@ static char *const kKVOContextMDCBaseTextField = "kKVOContextMDCBaseTextField";
       [self createHorizontalPositioningReference];
   return [[MDCBaseTextFieldLayout alloc]
                  initWithTextFieldSize:textFieldSize
+                    floatingLabelWidth:floatingLabelWidth
                   positioningReference:verticalPositioningReference
         horizontalPositioningReference:horizontalPositioningReference
                                   text:self.text
@@ -350,7 +358,7 @@ static char *const kKVOContextMDCBaseTextField = "kKVOContextMDCBaseTextField";
 
 - (CGSize)preferredSizeWithWidth:(CGFloat)width {
   CGSize fittingSize = CGSizeMake(width, CGFLOAT_MAX);
-  MDCBaseTextFieldLayout *layout = [self calculateLayoutWithTextFieldSize:fittingSize];
+  MDCBaseTextFieldLayout *layout = [self calculateLayoutWithTextFieldSize:fittingSize floatingLabelWidth:[self widthOfString:self.label.text withFont:self.label.font]];
   return CGSizeMake(width, layout.calculatedHeight);
 }
 

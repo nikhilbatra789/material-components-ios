@@ -25,6 +25,7 @@
 #pragma mark Object Lifecycle
 
 - (instancetype)initWithTextFieldSize:(CGSize)textFieldSize
+                   floatingLabelWidth:(CGFloat)floatingLabelWidth
                  positioningReference:
                      (id<MDCTextControlVerticalPositioningReference>)positioningReference
        horizontalPositioningReference:
@@ -52,6 +53,7 @@
   self = [super init];
   if (self) {
     [self calculateLayoutWithTextFieldSize:textFieldSize
+                        floatingLabelWidth:floatingLabelWidth
                       positioningReference:positioningReference
             horizontalPositioningReference:horizontalPositioningReference
                                       text:text
@@ -81,6 +83,7 @@
 #pragma mark Layout Calculation
 
 - (void)calculateLayoutWithTextFieldSize:(CGSize)textFieldSize
+                      floatingLabelWidth:(CGFloat)flotingLabelWidth
                     positioningReference:
                         (id<MDCTextControlVerticalPositioningReference>)positioningReference
           horizontalPositioningReference:
@@ -231,7 +234,7 @@
   CGRect clearButtonFrame =
       CGRectMake(clearButtonMinX, clearButtonMinY, clearButtonSideLength, clearButtonSideLength);
 
-  CGSize labelSizeNormal = MDCTextControlLabelSizeWith(label.text, textRectWidth, font);
+  CGSize labelSizeNormal = MDCTextControlLabelSizeWith(label.text, flotingLabelWidth, font);
   CGSize labelSizeFloating = MDCTextControlLabelSizeWith(label.text, textRectWidth, floatingFont);
   BOOL normalLabelWillTruncate = labelSizeNormal.height > font.lineHeight;
   BOOL floatingLabelWillTruncate = labelSizeFloating.height > floatingFont.lineHeight;

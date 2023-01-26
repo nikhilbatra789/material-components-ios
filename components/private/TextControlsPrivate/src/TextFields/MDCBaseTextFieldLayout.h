@@ -45,6 +45,7 @@
  */
 - (nonnull instancetype)
                initWithTextFieldSize:(CGSize)textFieldSize
+                  floatingLabelWidth:(CGFloat)floatingLabelWidth
                 positioningReference:
                     (nonnull id<MDCTextControlVerticalPositioningReference>)positioningReference
       horizontalPositioningReference:
